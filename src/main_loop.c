@@ -167,6 +167,7 @@ int main_loop() {
                     sleep(1);
                     flip_pages();
                     while (1) {
+                        stop_music();
                         update_inputs();
                         if (player1_buttons & (INPUT_MASK_A | INPUT_MASK_B | INPUT_MASK_START)) {
                             while (1) {
