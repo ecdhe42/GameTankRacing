@@ -5,7 +5,7 @@
 #include "music.h"
 #include "banking.h"
 #include "dynawave.h"
-#include "gen/assets/rubber.h"
+#include "gen/assets/racing.h"
 #include "gen/assets/sfx.h"
 
 #pragma data-name (push, "SAVE")
@@ -13,7 +13,7 @@
 
 #define TRACK_PROGRESSION_END   0x306C
 
-void main_loop();
+int main_loop();
 
 #pragma bss-name (push,"ZEROPAGE")
 unsigned char tmp, tmp2, tmp3, tmp4;
@@ -184,8 +184,8 @@ void splash() {
     while (1) {
         draw_sprite(0, 0, 127, 127, 0, 0, 4);
 
-        draw_sprite(50, 64, 6, 9, lap_total*6, 64, 3);
-        draw_sprite(60, 64, 24,9, 0, 73, 3);
+        draw_sprite(50, 54, 6, 9, lap_total*6, 64, 3);
+        draw_sprite(60, 54, 24,9, 0, 73, 3);
 
         await_draw_queue();
 
@@ -222,13 +222,14 @@ int main () {
     await_draw_queue();
     clear_border(0);
 
-    load_spritesheet((char *)&ASSET__rubber__track_bmp, 0);
-    load_spritesheet((char *)&ASSET__rubber__track2_bmp, 1);
-    load_spritesheet((char *)&ASSET__rubber__cars_bmp, 2);
-    load_spritesheet((char *)&ASSET__rubber__track_map_bmp, 3);
-    load_spritesheet((char *)&ASSET__rubber__splash_bmp, 4);
+    load_spritesheet((char *)&ASSET__racing__track_bmp, 0);
+    load_spritesheet((char *)&ASSET__racing__track2_bmp, 1);
+    load_spritesheet((char *)&ASSET__racing__cars_bmp, 2);
+    load_spritesheet((char *)&ASSET__racing__track_map_bmp, 3);
+    load_spritesheet((char *)&ASSET__racing__splash_bmp, 4);
     change_rom_bank(SAVE_BANK_NUM);
 
+    while (1) {
     splash();
 
     track_id = 0;
@@ -285,9 +286,12 @@ int main () {
 
     while (1) {
         change_rom_bank(0xFD);
-        main_loop();
+        if (main_loop() == 1) {
+            break;
+        }
         // Play the engine noise
         tick_music();
+    }
     }
     return (0);                                     //  We should never get here!
 }

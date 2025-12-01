@@ -5,7 +5,7 @@
 #include "music.h"
 #include "banking.h"
 #include "dynawave.h"
-#include "gen/assets/rubber.h"
+#include "gen/assets/racing.h"
 #include "gen/assets/sfx.h"
 
 
@@ -109,9 +109,9 @@ extern unsigned char track_map_x[98];
 extern unsigned char track_map_y[98];
 extern const char drift[27];
 
-unsigned char start1 = 64;
-unsigned char start2 = 64;
-unsigned char start3 = 64;
+unsigned char start1;
+unsigned char start2;
+unsigned char start3;
 
 #pragma code-name(push, "PROG0")
 
@@ -122,7 +122,7 @@ unsigned char start3 = 64;
 
 void breakpoint();
 
-void main_loop() {
+int main_loop() {
         draw_sprite(landscape, 0, 127-landscape, 32, 0, 0, 2);      // Draw landscape
         draw_sprite(0, 0, landscape, 32, 127-landscape, 0, 2);
         draw_box(0, 32, 127, 64, 253);                               // Draw grass
@@ -166,7 +166,18 @@ void main_loop() {
                     await_draw_queue();
                     sleep(1);
                     flip_pages();
-                    while (1);
+                    while (1) {
+                        update_inputs();
+                        if (player1_buttons & (INPUT_MASK_A | INPUT_MASK_B | INPUT_MASK_START)) {
+                            while (1) {
+                                update_inputs();
+                                if (!(player1_buttons & (INPUT_MASK_A | INPUT_MASK_B | INPUT_MASK_START))) {
+                                    break;
+                                }
+                            }
+                            return 1;
+                        }
+                    }
                 }
                 lap++;
                 display_lap = 120;
@@ -383,7 +394,11 @@ void main_loop() {
 
         // Display starting blocks (no car movement)
         if (start) {
-            if (start == 161) {
+            if (start == 200) {
+                start1 = 64;
+                start2 = 64;
+                start3 = 64;
+            } else if (start == 161) {
 //                play_sound_effect(&ASSET__sfx__start1_bin , 1);
                 start1 = 48;
             } else if (start == 81) {
@@ -581,6 +596,7 @@ void main_loop() {
         sleep(1);
         flip_pages();
         PROFILER_START(0);
+        return 0;
 }
 
 #pragma code-name (pop)

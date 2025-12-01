@@ -13,7 +13,7 @@ else
 endif
 
 #set this for your output ROM file name
-TARGET=burning_rubber.gtr
+TARGET=gametank_racing.gtr
 
 EMUPATH=../GameTankEmulator
 
